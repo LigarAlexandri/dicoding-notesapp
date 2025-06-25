@@ -1,0 +1,60 @@
+:root {
+    --primary-color:rgb(93, 27, 141); /* Biru yang Tenang */
+    --secondary-color:rgb(219, 131, 31); 
+    --background-color: #F8F9FA; 
+    --surface-color: #FFFFFF;
+    --on-primary: #FFFFFF;
+    --on-surface: #333333; 
+    --border-color: #E0E0E0;
+    --border-radius: 12px;
+    --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    --font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    background-color: var(--background-color);
+    color: var(--on-surface);
+}
+
+main {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h2.section-title {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--secondary-color);
+    padding-bottom: 10px;
+    margin-bottom: 32px;
+}
+
+/* Kriteria Opsional 4: Tampilan Responsif */
+@media (max-width: 768px) {
+    main {
+        padding: 16px;
+    }
+    h2.section-title {
+        font-size: 1.5em;
+    }
+}
+
+/* Animasi untuk item baru */
+@keyframes pop-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.new-note {
+    animation: pop-in 0.5s ease-out forwards;
+}
