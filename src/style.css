@@ -1,10 +1,10 @@
 :root {
     --primary-color:rgb(93, 27, 141); /* Biru yang Tenang */
-    --secondary-color:rgb(219, 131, 31); 
-    --background-color: #F8F9FA; 
+    --secondary-color:rgb(219, 131, 31);
+    --background-color: #F8F9FA;
     --surface-color: #FFFFFF;
     --on-primary: #FFFFFF;
-    --on-surface: #333333; 
+    --on-surface: #333333;
     --border-color: #E0E0E0;
     --border-radius: 12px;
     --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
@@ -43,7 +43,7 @@ h2.section-title {
     }
 }
 
-/* Animasi untuk item baru */
+/* Animasi untuk item baru - bisa tetap digunakan bersama animejs */
 @keyframes pop-in {
     0% {
         opacity: 0;
@@ -55,6 +55,23 @@ h2.section-title {
     }
 }
 
+/* Kelas ini mungkin digunakan jika ada elemen yang baru ditambahkan ke DOM */
 .new-note {
     animation: pop-in 0.5s ease-out forwards;
+}
+
+/* Anda dapat menambahkan style SweetAlert2 kustom di sini jika diperlukan */
+.swal2-popup {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+.swal2-title {
+    color: var(--primary-color);
+}
+.swal2-confirm.swal2-styled {
+    background-color: var(--primary-color) !important;
+}
+.swal2-cancel.swal2-styled {
+    background-color: var(--border-color) !important;
+    color: var(--on-surface) !important;
 }
