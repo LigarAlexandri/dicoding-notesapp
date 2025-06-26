@@ -28,7 +28,7 @@ module.exports = {
         use: {
           loader: 'babel-loader', // Gunakan Babel untuk transpiling
           options: {
-            presets: ['@babel/preset-env'], // Preset Babel untuk lingkungan
+            presets: ['@babel/preset-env'], // Preset Babel untuk Env
           },
         },
       },
