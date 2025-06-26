@@ -1,12 +1,12 @@
 class LoadingSpinner extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this.render();
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.render();
+  }
 
-    render() {
-        this.shadowRoot.innerHTML = `
+  render() {
+    this.shadowRoot.innerHTML = `
             <style>
                 :host {
                     position: fixed;
@@ -40,28 +40,28 @@ class LoadingSpinner extends HTMLElement {
             </style>
             <div class="spinner"></div>
         `;
-    }
+  }
 
-    static get observedAttributes() {
-        return ['visible'];
-    }
+  static get observedAttributes() {
+    return ['visible'];
+  }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'visible') {
-            if (newValue !== null) {
-                this.style.opacity = '1';
-                this.style.display = 'flex';
-            } else {
-                this.style.opacity = '0';
-                // Delay display:none to allow transition to complete
-                setTimeout(() => {
-                    if (this.getAttribute('visible') === null) { // Check if it's still hidden
-                        this.style.display = 'none';
-                    }
-                }, 300);
-            }
-        }
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'visible') {
+      if (newValue !== null) {
+        this.style.opacity = '1';
+        this.style.display = 'flex';
+      } else {
+        this.style.opacity = '0';
+        // Delay display:none to allow transition to complete
+        setTimeout(() => {
+          if (this.getAttribute('visible') === null) { // Check if it's still hidden
+            this.style.display = 'none';
+          }
+        }, 300);
+      }
     }
+  }
 }
 
 customElements.define('loading-spinner', LoadingSpinner);

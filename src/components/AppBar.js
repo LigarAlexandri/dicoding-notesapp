@@ -1,28 +1,28 @@
 // 2. <app-bar> - Header dengan penanganan custom attribute
 class AppBar extends HTMLElement {
-    static get observedAttributes() {
-        return ['header-title'];
-    }
+  static get observedAttributes() {
+    return ['header-title'];
+  }
 
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this._headerTitle = this.getAttribute('header-title') || 'Aplikasi Catatan';
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this._headerTitle = this.getAttribute('header-title') || 'Aplikasi Catatan';
+  }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'header-title' && oldValue !== newValue) {
-            this._headerTitle = newValue;
-            this.render();
-        }
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'header-title' && oldValue !== newValue) {
+      this._headerTitle = newValue;
+      this.render();
     }
+  }
 
-    connectedCallback() {
-        this.render();
-    }
+  connectedCallback() {
+    this.render();
+  }
 
-    render() {
-        this.shadowRoot.innerHTML = `
+  render() {
+    this.shadowRoot.innerHTML = `
             <style>
                 :host {
                     display: block;
@@ -48,7 +48,7 @@ class AppBar extends HTMLElement {
             </style>
             <h1>${this._headerTitle}</h1>
         `;
-    }
+  }
 }
 
 customElements.define('app-bar', AppBar);

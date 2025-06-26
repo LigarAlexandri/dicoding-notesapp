@@ -19,42 +19,42 @@ const notesData = [
 
 // 1. <note-app> - Komponen utama
 class NoteApp extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this._notes = [];
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this._notes = [];
+  }
 
-    connectedCallback() {
-        console.log('NoteApp connected, loading notes...'); // Debug
-        this._notes = [...notesData];
-        console.log('Notes loaded:', this._notes.length); // Debug
-        this.render();
-        this.setupEventListeners();
-    }
+  connectedCallback() {
+    console.log('NoteApp connected, loading notes...'); // Debug
+    this._notes = [...notesData];
+    console.log('Notes loaded:', this._notes.length); // Debug
+    this.render();
+    this.setupEventListeners();
+  }
 
-    setupEventListeners() {
-        const noteForm = this.shadowRoot.querySelector('note-form');
-        if (noteForm) {
-            noteForm.addEventListener('add-note', (event) => {
-                console.log('Adding new note:', event.detail); // Debug
-                const newNote = event.detail;
-                this._notes.unshift(newNote);
-                this.updateNoteList();
-            });
-        }
+  setupEventListeners() {
+    const noteForm = this.shadowRoot.querySelector('note-form');
+    if (noteForm) {
+      noteForm.addEventListener('add-note', (event) => {
+        console.log('Adding new note:', event.detail); // Debug
+        const newNote = event.detail;
+        this._notes.unshift(newNote);
+        this.updateNoteList();
+      });
     }
+  }
 
-    updateNoteList() {
-        const noteList = this.shadowRoot.querySelector('note-list');
-        if (noteList) {
-            console.log('Updating note list with', this._notes.length, 'notes'); // Debug
-            noteList.updateNotes(this._notes);
-        }
+  updateNoteList() {
+    const noteList = this.shadowRoot.querySelector('note-list');
+    if (noteList) {
+      console.log('Updating note list with', this._notes.length, 'notes'); // Debug
+      noteList.updateNotes(this._notes);
     }
+  }
 
-    render() {
-        this.shadowRoot.innerHTML = `
+  render() {
+    this.shadowRoot.innerHTML = `
             <style>
                 @import 'style.css';
             </style>
@@ -67,39 +67,39 @@ class NoteApp extends HTMLElement {
                 </section>
             </main>
         `;
-        
-        // Set initial notes after a brief delay to ensure elements are ready
-        setTimeout(() => {
-            this.updateNoteList();
-        }, 0);
-    }
+
+    // Set initial notes after a brief delay to ensure elements are ready
+    setTimeout(() => {
+      this.updateNoteList();
+    }, 0);
+  }
 }
 
 // 2. <app-bar> - Header dengan penanganan custom attribute
 class AppBar extends HTMLElement {
-    static get observedAttributes() {
-        return ['header-title'];
-    }
+  static get observedAttributes() {
+    return ['header-title'];
+  }
 
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this._headerTitle = this.getAttribute('header-title') || 'Aplikasi Catatan';
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this._headerTitle = this.getAttribute('header-title') || 'Aplikasi Catatan';
+  }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'header-title' && oldValue !== newValue) {
-            this._headerTitle = newValue;
-            this.render();
-        }
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'header-title' && oldValue !== newValue) {
+      this._headerTitle = newValue;
+      this.render();
     }
-    
-    connectedCallback() {
-        this.render();
-    }
+  }
 
-    render() {
-        this.shadowRoot.innerHTML = `
+  connectedCallback() {
+    this.render();
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
             <style>
                 @import 'style.css';
                 :host {
@@ -126,74 +126,74 @@ class AppBar extends HTMLElement {
             </style>
             <h1>${this._headerTitle}</h1>
         `;
-    }
+  }
 }
 
 // 3. <note-form> - Formulir dengan validasi real-time
 class NoteForm extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this.MAX_TITLE_LENGTH = 50;
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.MAX_TITLE_LENGTH = 50;
+  }
 
-    connectedCallback() {
-        this.render();
-        this.setupEventListeners();
-    }
+  connectedCallback() {
+    this.render();
+    this.setupEventListeners();
+  }
 
-    setupEventListeners() {
-        const form = this.shadowRoot.querySelector('form');
-        const titleInput = this.shadowRoot.querySelector('#note-title');
-        const bodyInput = this.shadowRoot.querySelector('#note-body');
-        const submitButton = this.shadowRoot.querySelector('button');
-        const charCounter = this.shadowRoot.querySelector('.char-counter');
+  setupEventListeners() {
+    const form = this.shadowRoot.querySelector('form');
+    const titleInput = this.shadowRoot.querySelector('#note-title');
+    const bodyInput = this.shadowRoot.querySelector('#note-body');
+    const submitButton = this.shadowRoot.querySelector('button');
+    const charCounter = this.shadowRoot.querySelector('.char-counter');
 
-        const validateForm = () => {
-            const titleValue = titleInput.value.trim();
-            const bodyValue = bodyInput.value.trim();
-            const titleLength = titleValue.length;
-            
-            charCounter.textContent = `${titleLength}/${this.MAX_TITLE_LENGTH}`;
-            
-            if (titleLength > this.MAX_TITLE_LENGTH) {
-                charCounter.style.color = 'red';
-            } else {
-                charCounter.style.color = 'inherit';
-            }
+    const validateForm = () => {
+      const titleValue = titleInput.value.trim();
+      const bodyValue = bodyInput.value.trim();
+      const titleLength = titleValue.length;
 
-            submitButton.disabled = !titleValue || !bodyValue || titleLength > this.MAX_TITLE_LENGTH;
-        };
+      charCounter.textContent = `${titleLength}/${this.MAX_TITLE_LENGTH}`;
 
-        titleInput.addEventListener('input', validateForm);
-        bodyInput.addEventListener('input', validateForm);
+      if (titleLength > this.MAX_TITLE_LENGTH) {
+        charCounter.style.color = 'red';
+      } else {
+        charCounter.style.color = 'inherit';
+      }
 
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const newNote = {
-                id: 'notes-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now(),
-                title: titleInput.value.trim(),
-                body: bodyInput.value.trim(),
-                createdAt: new Date().toISOString(),
-                archived: false,
-            };
-            
-            console.log('Form submitting note:', newNote); // Debug
-            this.dispatchEvent(new CustomEvent('add-note', { 
-                detail: newNote, 
-                bubbles: true, 
-                composed: true 
-            }));
-            
-            form.reset();
-            validateForm();
-        });
-        
-        validateForm();
-    }
+      submitButton.disabled = !titleValue || !bodyValue || titleLength > this.MAX_TITLE_LENGTH;
+    };
 
-    render() {
-        this.shadowRoot.innerHTML = `
+    titleInput.addEventListener('input', validateForm);
+    bodyInput.addEventListener('input', validateForm);
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const newNote = {
+        id: `notes-${  Math.random().toString(36).substr(2, 9)  }-${  Date.now()}`,
+        title: titleInput.value.trim(),
+        body: bodyInput.value.trim(),
+        createdAt: new Date().toISOString(),
+        archived: false,
+      };
+
+      console.log('Form submitting note:', newNote); // Debug
+      this.dispatchEvent(new CustomEvent('add-note', {
+        detail: newNote,
+        bubbles: true,
+        composed: true
+      }));
+
+      form.reset();
+      validateForm();
+    });
+
+    validateForm();
+  }
+
+  render() {
+    this.shadowRoot.innerHTML = `
             <style>
                 @import 'style.css';
                 :host { display: block; max-width: 600px; margin: 0 auto 48px auto; }
@@ -218,32 +218,32 @@ class NoteForm extends HTMLElement {
                 <button type="submit" disabled>Buat Catatan</button>
             </form>
         `;
-    }
+  }
 }
 
 // 4. <note-list> - Komponen untuk daftar catatan
 class NoteList extends HTMLElement {
-    constructor() { 
-        super(); 
-        this.attachShadow({ mode: 'open' }); 
-        this._notes = [];
-    }
-    
-    connectedCallback() {
-        console.log('NoteList connected'); // Debug
-        this.render();
-    }
-    
-    updateNotes(notes) {
-        console.log('NoteList updateNotes called with:', notes?.length, 'notes'); // Debug
-        this._notes = notes || [];
-        this.render();
-    }
-    
-    render() {
-        console.log('NoteList rendering with', this._notes.length, 'notes'); // Debug
-        
-        this.shadowRoot.innerHTML = `
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this._notes = [];
+  }
+
+  connectedCallback() {
+    console.log('NoteList connected'); // Debug
+    this.render();
+  }
+
+  updateNotes(notes) {
+    console.log('NoteList updateNotes called with:', notes?.length, 'notes'); // Debug
+    this._notes = notes || [];
+    this.render();
+  }
+
+  render() {
+    console.log('NoteList rendering with', this._notes.length, 'notes'); // Debug
+
+    this.shadowRoot.innerHTML = `
             <style>
                 @import 'style.css';
                 .note-list-container { 
@@ -265,8 +265,8 @@ class NoteList extends HTMLElement {
                 }
             </style>
             <div class="note-list-container" id="notes-container">
-                ${this._notes.length > 0 
-                    ? this._notes.map(note => `
+                ${this._notes.length > 0
+    ? this._notes.map((note) => `
                         <note-item 
                             data-id="${note.id}"
                             data-title="${this.escapeHtml(note.title)}"
@@ -274,57 +274,57 @@ class NoteList extends HTMLElement {
                             data-created="${note.createdAt}">
                         </note-item>
                     `).join('')
-                    : '<p class="empty-message">Tidak ada catatan.</p>'
-                }
+    : '<p class="empty-message">Tidak ada catatan.</p>'
+}
             </div>
         `;
-    }
-    
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
 }
 
 // 5. <note-item> - Komponen untuk setiap item catatan
 class NoteItem extends HTMLElement {
-    static get observedAttributes() {
-        return ['data-id', 'data-title', 'data-body', 'data-created'];
+  static get observedAttributes() {
+    return ['data-id', 'data-title', 'data-body', 'data-created'];
+  }
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  connectedCallback() {
+    this.render();
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      this.render();
     }
-    
-    constructor() { 
-        super(); 
-        this.attachShadow({ mode: 'open' }); 
+  }
+
+  render() {
+    const title = this.getAttribute('data-title') || '';
+    const body = this.getAttribute('data-body') || '';
+    const createdAt = this.getAttribute('data-created') || '';
+
+    if (!title && !body) {
+      return; // Don't render if no data
     }
-    
-    connectedCallback() {
-        this.render();
-    }
-    
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue !== newValue) {
-            this.render();
-        }
-    }
-    
-    render() {
-        const title = this.getAttribute('data-title') || '';
-        const body = this.getAttribute('data-body') || '';
-        const createdAt = this.getAttribute('data-created') || '';
-        
-        if (!title && !body) {
-            return; // Don't render if no data
-        }
-        
-        const formattedDate = createdAt ? new Date(createdAt).toLocaleDateString('id-ID', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        }) : '';
-        
-        this.shadowRoot.innerHTML = `
+
+    const formattedDate = createdAt ? new Date(createdAt).toLocaleDateString('id-ID', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }) : '';
+
+    this.shadowRoot.innerHTML = `
             <style>
                 @import 'style.css';
                 :host { 
@@ -368,7 +368,7 @@ class NoteItem extends HTMLElement {
             ${formattedDate ? `<span class="date">${formattedDate}</span>` : ''}
             <p>${body}</p>
         `;
-    }
+  }
 }
 
 // Mendefinisikan semua custom elements

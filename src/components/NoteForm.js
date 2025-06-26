@@ -1,78 +1,78 @@
 // 3. <note-form> - Formulir dengan validasi real-time
 class NoteForm extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this.MAX_TITLE_LENGTH = 50;
-        this._isEnabled = true; // Untuk mengontrol status aktif/nonaktif form
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.MAX_TITLE_LENGTH = 50;
+    this._isEnabled = true; // Untuk mengontrol status aktif/nonaktif form
+  }
 
-    connectedCallback() {
-        this.render();
-        this.setupEventListeners();
-    }
+  connectedCallback() {
+    this.render();
+    this.setupEventListeners();
+  }
 
-    toggleFormEnabled(enabled) {
-        this._isEnabled = enabled;
-        const titleInput = this.shadowRoot.querySelector('#note-title');
-        const bodyInput = this.shadowRoot.querySelector('#note-body');
-        const submitButton = this.shadowRoot.querySelector('button');
+  toggleFormEnabled(enabled) {
+    this._isEnabled = enabled;
+    const titleInput = this.shadowRoot.querySelector('#note-title');
+    const bodyInput = this.shadowRoot.querySelector('#note-body');
+    const submitButton = this.shadowRoot.querySelector('button');
 
-        if (titleInput) titleInput.disabled = !enabled;
-        if (bodyInput) bodyInput.disabled = !enabled;
-        if (submitButton) this.validateForm(); // Re-validate to update button state
-    }
+    if (titleInput) titleInput.disabled = !enabled;
+    if (bodyInput) bodyInput.disabled = !enabled;
+    if (submitButton) this.validateForm(); // Re-validate to update button state
+  }
 
-    setupEventListeners() {
-        const form = this.shadowRoot.querySelector('form');
-        const titleInput = this.shadowRoot.querySelector('#note-title');
-        const bodyInput = this.shadowRoot.querySelector('#note-body');
-        const charCounter = this.shadowRoot.querySelector('.char-counter');
+  setupEventListeners() {
+    const form = this.shadowRoot.querySelector('form');
+    const titleInput = this.shadowRoot.querySelector('#note-title');
+    const bodyInput = this.shadowRoot.querySelector('#note-body');
+    const charCounter = this.shadowRoot.querySelector('.char-counter');
 
-        this.validateForm = () => { // Make validateForm accessible for external calls
-            const submitButton = this.shadowRoot.querySelector('button');
-            const titleValue = titleInput.value.trim();
-            const bodyValue = bodyInput.value.trim();
-            const titleLength = titleValue.length;
+    this.validateForm = () => { // Make validateForm accessible for external calls
+      const submitButton = this.shadowRoot.querySelector('button');
+      const titleValue = titleInput.value.trim();
+      const bodyValue = bodyInput.value.trim();
+      const titleLength = titleValue.length;
 
-            charCounter.textContent = `${titleLength}/${this.MAX_TITLE_LENGTH}`;
+      charCounter.textContent = `${titleLength}/${this.MAX_TITLE_LENGTH}`;
 
-            if (titleLength > this.MAX_TITLE_LENGTH) {
-                charCounter.style.color = 'red';
-            } else {
-                charCounter.style.color = 'inherit';
-            }
+      if (titleLength > this.MAX_TITLE_LENGTH) {
+        charCounter.style.color = 'red';
+      } else {
+        charCounter.style.color = 'inherit';
+      }
 
-            submitButton.disabled = !this._isEnabled || !titleValue || !bodyValue || titleLength > this.MAX_TITLE_LENGTH;
-        };
+      submitButton.disabled = !this._isEnabled || !titleValue || !bodyValue || titleLength > this.MAX_TITLE_LENGTH;
+    };
 
-        titleInput.addEventListener('input', this.validateForm);
-        bodyInput.addEventListener('input', this.validateForm);
+    titleInput.addEventListener('input', this.validateForm);
+    bodyInput.addEventListener('input', this.validateForm);
 
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            if (!this._isEnabled) return; // Prevent submission if disabled
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!this._isEnabled) return; // Prevent submission if disabled
 
-            const newNote = {
-                title: titleInput.value.trim(),
-                body: bodyInput.value.trim(),
-            };
+      const newNote = {
+        title: titleInput.value.trim(),
+        body: bodyInput.value.trim(),
+      };
 
-            this.dispatchEvent(new CustomEvent('add-note', {
-                detail: newNote,
-                bubbles: true,
-                composed: true
-            }));
+      this.dispatchEvent(new CustomEvent('add-note', {
+        detail: newNote,
+        bubbles: true,
+        composed: true
+      }));
 
-            form.reset();
-            this.validateForm();
-        });
+      form.reset();
+      this.validateForm();
+    });
 
-        this.validateForm(); // Initial validation
-    }
+    this.validateForm(); // Initial validation
+  }
 
-    render() {
-        this.shadowRoot.innerHTML = `
+  render() {
+    this.shadowRoot.innerHTML = `
             <style>
                 :host { display: block; max-width: 600px; margin: 0 auto 48px auto; }
                 form { display: flex; flex-direction: column; gap: 20px; padding: 24px; background-color: var(--surface-color); border-radius: var(--border-radius); box-shadow: var(--shadow); }
@@ -96,7 +96,7 @@ class NoteForm extends HTMLElement {
                 <button type="submit" disabled>Buat Catatan</button>
             </form>
         `;
-    }
+  }
 }
 
 customElements.define('note-form', NoteForm);

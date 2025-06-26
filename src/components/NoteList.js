@@ -1,22 +1,22 @@
 // 4. <note-list> - Komponen untuk daftar catatan
 class NoteList extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this._notes = [];
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this._notes = [];
+  }
 
-    connectedCallback() {
-        this.render();
-    }
+  connectedCallback() {
+    this.render();
+  }
 
-    updateNotes(notes) {
-        this._notes = notes || [];
-        this.render();
-    }
+  updateNotes(notes) {
+    this._notes = notes || [];
+    this.render();
+  }
 
-    render() {
-        this.shadowRoot.innerHTML = `
+  render() {
+    this.shadowRoot.innerHTML = `
             <style>
                 .note-list-container {
                     display: grid;
@@ -38,7 +38,7 @@ class NoteList extends HTMLElement {
             </style>
             <div class="note-list-container" id="notes-container">
                 ${this._notes.length > 0
-                    ? this._notes.map(note => `
+    ? this._notes.map((note) => `
                         <note-item
                             data-id="${note.id}"
                             data-title="${this.escapeHtml(note.title)}"
@@ -46,17 +46,17 @@ class NoteList extends HTMLElement {
                             data-created="${note.createdAt}">
                         </note-item>
                     `).join('')
-                    : '<p class="empty-message">Tidak ada catatan.</p>'
-                }
+    : '<p class="empty-message">Tidak ada catatan.</p>'
+}
             </div>
         `;
-    }
+  }
 
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
 }
 
 customElements.define('note-list', NoteList);

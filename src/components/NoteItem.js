@@ -1,81 +1,81 @@
 // 5. <note-item> - Komponen untuk setiap item catatan
 class NoteItem extends HTMLElement {
-    static get observedAttributes() {
-        return ['data-id', 'data-title', 'data-body', 'data-created', 'data-archived'];
+  static get observedAttributes() {
+    return ['data-id', 'data-title', 'data-body', 'data-created', 'data-archived'];
+  }
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  connectedCallback() {
+    this.render();
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
+    // Hapus event listener lama jika ada (untuk menghindari duplikasi)
+    const oldDeleteButton = this.shadowRoot.querySelector('.delete-button');
+    if (oldDeleteButton) oldDeleteButton.removeEventListener('click', this._deleteHandler);
+    const oldArchiveButton = this.shadowRoot.querySelector('.archive-button');
+    if (oldArchiveButton) oldArchiveButton.removeEventListener('click', this._archiveHandler);
+
+
+    this._deleteHandler = () => {
+      const noteId = this.getAttribute('data-id');
+      this.dispatchEvent(new CustomEvent('delete-note', {
+        detail: noteId,
+        bubbles: true,
+        composed: true
+      }));
+    };
+
+    this._archiveHandler = () => {
+      const noteId = this.getAttribute('data-id');
+      const isArchived = this.getAttribute('data-archived') === 'true';
+      this.dispatchEvent(new CustomEvent(isArchived ? 'unarchive-note' : 'archive-note', {
+        detail: noteId,
+        bubbles: true,
+        composed: true
+      }));
+    };
+
+    // Tambahkan event listener baru
+    const deleteButton = this.shadowRoot.querySelector('.delete-button');
+    if (deleteButton) deleteButton.addEventListener('click', this._deleteHandler);
+    const archiveButton = this.shadowRoot.querySelector('.archive-button');
+    if (archiveButton) archiveButton.addEventListener('click', this._archiveHandler);
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      this.render();
+      // Panggil kembali setupEventListeners untuk memastikan event listener baru dipasang
+      // setelah rendering ulang karena perubahan atribut.
+      this.setupEventListeners();
+    }
+  }
+
+  render() {
+    const id = this.getAttribute('data-id') || '';
+    const title = this.getAttribute('data-title') || '';
+    const body = this.getAttribute('data-body') || '';
+    const createdAt = this.getAttribute('data-created') || '';
+    const isArchived = this.getAttribute('data-archived') === 'true';
+
+    if (!title && !body) {
+      return; // Jangan render jika tidak ada data
     }
 
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-    }
+    const formattedDate = createdAt ? new Date(createdAt).toLocaleDateString('id-ID', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }) : '';
 
-    connectedCallback() {
-        this.render();
-        this.setupEventListeners();
-    }
-
-    setupEventListeners() {
-        // Hapus event listener lama jika ada (untuk menghindari duplikasi)
-        const oldDeleteButton = this.shadowRoot.querySelector('.delete-button');
-        if (oldDeleteButton) oldDeleteButton.removeEventListener('click', this._deleteHandler);
-        const oldArchiveButton = this.shadowRoot.querySelector('.archive-button');
-        if (oldArchiveButton) oldArchiveButton.removeEventListener('click', this._archiveHandler);
-
-
-        this._deleteHandler = () => {
-            const noteId = this.getAttribute('data-id');
-            this.dispatchEvent(new CustomEvent('delete-note', {
-                detail: noteId,
-                bubbles: true,
-                composed: true
-            }));
-        };
-
-        this._archiveHandler = () => {
-            const noteId = this.getAttribute('data-id');
-            const isArchived = this.getAttribute('data-archived') === 'true';
-            this.dispatchEvent(new CustomEvent(isArchived ? 'unarchive-note' : 'archive-note', {
-                detail: noteId,
-                bubbles: true,
-                composed: true
-            }));
-        };
-
-        // Tambahkan event listener baru
-        const deleteButton = this.shadowRoot.querySelector('.delete-button');
-        if (deleteButton) deleteButton.addEventListener('click', this._deleteHandler);
-        const archiveButton = this.shadowRoot.querySelector('.archive-button');
-        if (archiveButton) archiveButton.addEventListener('click', this._archiveHandler);
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue !== newValue) {
-            this.render();
-            // Panggil kembali setupEventListeners untuk memastikan event listener baru dipasang
-            // setelah rendering ulang karena perubahan atribut.
-            this.setupEventListeners();
-        }
-    }
-
-    render() {
-        const id = this.getAttribute('data-id') || '';
-        const title = this.getAttribute('data-title') || '';
-        const body = this.getAttribute('data-body') || '';
-        const createdAt = this.getAttribute('data-created') || '';
-        const isArchived = this.getAttribute('data-archived') === 'true';
-
-        if (!title && !body) {
-            return; // Jangan render jika tidak ada data
-        }
-
-        const formattedDate = createdAt ? new Date(createdAt).toLocaleDateString('id-ID', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }) : '';
-
-        this.shadowRoot.innerHTML = `
+    this.shadowRoot.innerHTML = `
             <style>
                 :host {
                     display: flex;
@@ -165,7 +165,7 @@ class NoteItem extends HTMLElement {
                 </button>
             </div>
         `;
-    }
+  }
 }
 
 customElements.define('note-item', NoteItem);
